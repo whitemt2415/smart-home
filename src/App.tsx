@@ -16,13 +16,18 @@ const App: FC = () => {
   const totalCount: number = lights.length;
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      background: "#181820",
-      fontFamily: "'Kanit', sans-serif",
-      color: "#fff",
-    }}>
-      <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#6d6d79",
+        fontFamily: "'Kanit', sans-serif",
+        color: "#fff",
+      }}
+    >
+      <link
+        href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet"
+      />
 
       <style>{`
         @keyframes shimmer { 0%,100%{opacity:.5} 50%{opacity:.8} }
@@ -37,7 +42,7 @@ const App: FC = () => {
           position: sticky;
           top: 0;
           z-index: 100;
-          background: rgba(24,24,32,.88);
+          background: rgba(46,61,121,.9);
           backdrop-filter: blur(16px);
           -webkit-backdrop-filter: blur(16px);
           border-bottom: 1px solid rgba(255,255,255,.06);
@@ -60,40 +65,71 @@ const App: FC = () => {
         @media(min-width:480px){.stats-row{gap:10px;margin-top:14px}}
         @media(min-width:768px){.stats-row{gap:14px}}
 
-        .stat-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:10px 8px;text-align:center}
+        .stat-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 8px;text-align:center}
         .stat-num{font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace;line-height:1.2}
         @media(min-width:768px){.stat-num{font-size:24px}.stat-box{padding:14px 12px}}
-        .stat-label{font-size:9px;font-family:'JetBrains Mono',monospace;color:#777;letter-spacing:.5px;margin-top:2px}
+        .stat-label{font-size:10px;font-family:'JetBrains Mono',monospace;color:#dfdfdf;letter-spacing:.5px;margin-top:2px}
         @media(min-width:768px){.stat-label{font-size:10px}}
 
-        .btn-action{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px 8px;cursor:pointer;font-family:'Kanit',sans-serif;font-size:11px;font-weight:500;transition:all .2s ease;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-        .btn-action:hover{transform:scale(1.03);background:rgba(255,255,255,.06)}
+        .btn-action{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 8px;cursor:pointer;font-family:'Kanit',sans-serif;font-size:11px;font-weight:500;transition:all .2s ease;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+        .btn-action:hover{transform:scale(1.03);background:rgba(255,255,255,.09)}
         .btn-action:active{transform:scale(.97)}
       `}</style>
 
       {/* ===== STICKY HEADER ===== */}
       <div className="sticky-header">
         <div className="header-inner">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <h1 style={{
-              fontSize: "clamp(18px, 3.5vw, 24px)", fontWeight: 700, lineHeight: 1.2,
-              background: "linear-gradient(135deg, #FFD93D, #FF8C00)",
-              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-            }}>🏠 Smart Home</h1>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <h1
+              style={{
+                fontSize: "clamp(18px, 3.5vw, 24px)",
+                fontWeight: 700,
+                lineHeight: 1.2,
+                background: "linear-gradient(135deg, #FFD93D, #FF8C00)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+              }}
+            >
+              {" "}
+              Smart Home
+            </h1>
 
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{
-                fontSize: 10, color: "#666",
-                fontFamily: "'JetBrains Mono', monospace",
-              }}>{time.toLocaleTimeString("th-TH")}</div>
+              <div
+                style={{
+                  fontSize: 10,
+                  color: "#dfdfdf",
+                  fontFamily: "'JetBrains Mono', monospace",
+                }}
+              >
+                {time.toLocaleTimeString("th-TH")}
+              </div>
               <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                <div style={{
-                  width: 7, height: 7, borderRadius: "50%",
-                  background: connected ? "#4CAF50" : "#FF5252",
-                  boxShadow: connected ? "0 0 8px rgba(76,175,80,.5)" : "none",
-                  animation: connected ? "pulse 2s infinite" : "none",
-                }}/>
-                <span style={{ fontSize: 10, fontFamily: "'JetBrains Mono', monospace", color: connected ? "#66BB6A" : "#FF5252" }}>
+                <div
+                  style={{
+                    width: 7,
+                    height: 7,
+                    borderRadius: "50%",
+                    background: connected ? "#4CAF50" : "#FF5252",
+                    boxShadow: connected
+                      ? "0 0 8px rgba(76,175,80,.5)"
+                      : "none",
+                    animation: connected ? "pulse 2s infinite" : "none",
+                  }}
+                />
+                <span
+                  style={{
+                    fontSize: 10,
+                    fontFamily: "'JetBrains Mono', monospace",
+                    color: connected ? "#66BB6A" : "#FF5252",
+                  }}
+                >
                   {connected ? "ONLINE" : "OFFLINE"}
                 </span>
               </div>
@@ -102,18 +138,32 @@ const App: FC = () => {
 
           <div className="stats-row">
             <div className="stat-box">
-              <div className="stat-num" style={{ color: "#FFAB00" }}>{onCount}</div>
+              <div className="stat-num" style={{ color: "#FFAB00" }}>
+                {onCount}
+              </div>
               <div className="stat-label">ON</div>
             </div>
             <div className="stat-box">
-              <div className="stat-num" style={{ color: "#66BB6A" }}>{totalCount}</div>
+              <div className="stat-num" style={{ color: "#66BB6A" }}>
+                {totalCount}
+              </div>
               <div className="stat-label">DEVICES</div>
             </div>
-            <button className="btn-action" style={{ color: "#FF5252", borderColor: "rgba(255,82,82,.15)" }} onClick={allOff}>
-              <span style={{ fontSize: 14 }}>🔴</span><span>ปิดหมด</span>
+            <button
+              className="btn-action"
+              style={{ color: "#FF5252", borderColor: "rgba(255,82,82,.15)" }}
+              onClick={allOff}
+            >
+              <span style={{ fontSize: 14 }}>🔴</span>
+              <span>ปิดหมด</span>
             </button>
-            <button className="btn-action" style={{ color: "#FFAB00", borderColor: "rgba(255,171,0,.15)" }} onClick={allOn}>
-              <span style={{ fontSize: 14 }}>🟡</span><span>เปิดหมด</span>
+            <button
+              className="btn-action"
+              style={{ color: "#FFAB00", borderColor: "rgba(255,171,0,.15)" }}
+              onClick={allOn}
+            >
+              <span style={{ fontSize: 14 }}>🟡</span>
+              <span>เปิดหมด</span>
             </button>
           </div>
         </div>
@@ -122,17 +172,29 @@ const App: FC = () => {
       {/* ===== GRID ===== */}
       <div className="grid-lights">
         {loading
-          ? Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} delay={i * 0.12} />)
-          : lights.map((light, i) => (
-              <LightCard key={light.id} light={light} onToggle={toggle} index={i} />
+          ? Array.from({ length: 6 }).map((_, i) => (
+              <SkeletonCard key={i} delay={i * 0.12} />
             ))
-        }
+          : lights.map((light, i) => (
+              <LightCard
+                key={light.id}
+                light={light}
+                onToggle={toggle}
+                index={i}
+              />
+            ))}
       </div>
 
       {!loading && lights.length === 0 && (
-        <div style={{ textAlign: "center", padding: "60px 20px", color: "#666" }}>
+        <div
+          style={{ textAlign: "center", padding: "60px 20px", color: "#666" }}
+        >
           <div style={{ fontSize: 40, marginBottom: 12 }}>💡</div>
-          <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13 }}>ไม่มีอุปกรณ์ที่ active</div>
+          <div
+            style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13 }}
+          >
+            ไม่มีอุปกรณ์ที่ active
+          </div>
         </div>
       )}
     </div>
