@@ -91,7 +91,7 @@ const App: FC = () => {
                 fontSize: "clamp(18px, 3.5vw, 24px)",
                 fontWeight: 700,
                 lineHeight: 1.2,
-                background: "linear-gradient(135deg, #FFD93D, #FF8C00)",
+                background: "linear-gradient(100deg, #ffffff, #e7e7e7)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}
