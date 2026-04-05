@@ -1,10 +1,12 @@
+// src/App.tsx
+
 import { useState, useEffect, type FC } from "react";
 import { useLights } from "./hooks/useLights";
 import LightCard from "./components/LightCard";
 import SkeletonCard from "./components/SkeletonCard";
 
 const App: FC = () => {
-  const { lights, loading, connected, toggle, allOff, allOn } = useLights();
+  const { lights, loading, connected, busy, toggle, allOff, allOn } = useLights();
   const [time, setTime] = useState<Date>(new Date());
 
   useEffect(() => {
@@ -33,6 +35,7 @@ const App: FC = () => {
         @keyframes shimmer { 0%,100%{opacity:.5} 50%{opacity:.8} }
         @keyframes fadeSlideIn { from{opacity:0;transform:translateY(16px) scale(.97)} to{opacity:1;transform:translateY(0) scale(1)} }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+        @keyframes spin { to{transform:rotate(360deg)} }
         *{box-sizing:border-box;margin:0;padding:0}
 
         .light-card:focus-visible { outline:2px solid #FFAB00; outline-offset:2px; }
@@ -69,11 +72,27 @@ const App: FC = () => {
         .stat-num{font-size:18px;font-weight:700;font-family:'JetBrains Mono',monospace;line-height:1.2}
         @media(min-width:768px){.stat-num{font-size:24px}.stat-box{padding:14px 12px}}
         .stat-label{font-size:10px;font-family:'JetBrains Mono',monospace;color:#dfdfdf;letter-spacing:.5px;margin-top:2px}
-        @media(min-width:768px){.stat-label{font-size:10px}}
 
-        .btn-action{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 8px;cursor:pointer;font-family:'Kanit',sans-serif;font-size:11px;font-weight:500;transition:all .2s ease;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-        .btn-action:hover{transform:scale(1.03);background:rgba(255,255,255,.09)}
-        .btn-action:active{transform:scale(.97)}
+        .btn-action{
+          background:rgba(255,255,255,.05);
+          border:1px solid rgba(255,255,255,.1);
+          border-radius:10px;padding:10px 8px;
+          cursor:pointer;font-family:'Kanit',sans-serif;
+          font-size:11px;font-weight:500;
+          transition:all .2s ease;text-align:center;
+          display:flex;flex-direction:column;
+          align-items:center;justify-content:center;gap:2px;
+        }
+        .btn-action:hover:not(:disabled){transform:scale(1.03);background:rgba(255,255,255,.09)}
+        .btn-action:active:not(:disabled){transform:scale(.97)}
+        .btn-action:disabled{
+          opacity:.4;cursor:not-allowed;transform:none;
+        }
+        .spinner{
+          width:14px;height:14px;border:2px solid rgba(255,255,255,.3);
+          border-top-color:#fff;border-radius:50%;
+          animation:spin .7s linear infinite;
+        }
       `}</style>
 
       {/* ===== STICKY HEADER ===== */}
@@ -96,8 +115,7 @@ const App: FC = () => {
                 WebkitTextFillColor: "transparent",
               }}
             >
-              {" "}
-              Smart Home
+              {" "}Smart Home
             </h1>
 
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -117,9 +135,7 @@ const App: FC = () => {
                     height: 7,
                     borderRadius: "50%",
                     background: connected ? "#4CAF50" : "#FF5252",
-                    boxShadow: connected
-                      ? "0 0 8px rgba(76,175,80,.5)"
-                      : "none",
+                    boxShadow: connected ? "0 0 8px rgba(76,175,80,.5)" : "none",
                     animation: connected ? "pulse 2s infinite" : "none",
                   }}
                 />
@@ -149,20 +165,35 @@ const App: FC = () => {
               </div>
               <div className="stat-label">DEVICES</div>
             </div>
+
+            {/* ✅ ลำดับ: ปิดหมด (ซ้าย) → เปิดหมด (ขวา) */}
             <button
               className="btn-action"
               style={{ color: "#FF5252", borderColor: "rgba(255,82,82,.15)" }}
               onClick={allOff}
+              disabled={busy}
+              aria-label="ปิดหมด"
             >
-              <span style={{ fontSize: 14 }}>🔴</span>
+              {busy ? (
+                <div className="spinner" />
+              ) : (
+                <span style={{ fontSize: 14 }}>🔴</span>
+              )}
               <span>ปิดหมด</span>
             </button>
+
             <button
               className="btn-action"
               style={{ color: "#FFAB00", borderColor: "rgba(255,171,0,.15)" }}
               onClick={allOn}
+              disabled={busy}
+              aria-label="เปิดหมด"
             >
-              <span style={{ fontSize: 14 }}>🟡</span>
+              {busy ? (
+                <div className="spinner" />
+              ) : (
+                <span style={{ fontSize: 14 }}>🟡</span>
+              )}
               <span>เปิดหมด</span>
             </button>
           </div>

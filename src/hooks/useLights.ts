@@ -1,6 +1,6 @@
-//src\hooks\useLights.ts
+// src/hooks/useLights.ts
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { supabase } from "../lib/supabase";
 import type { Light } from "../types/light";
 import type { RealtimePostgresChangesPayload } from "@supabase/supabase-js";
@@ -9,6 +9,13 @@ export function useLights() {
   const [lights, setLights] = useState<Light[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [connected, setConnected] = useState<boolean>(false);
+  const [busy, setBusy] = useState<boolean>(false);
+
+  // ✅ useRef เก็บค่า lights ล่าสุดเสมอ — ไม่มี stale closure
+  const lightsRef = useRef<Light[]>([]);
+  useEffect(() => {
+    lightsRef.current = lights;
+  }, [lights]);
 
   // fetch + realtime subscribe
   useEffect(() => {
@@ -58,35 +65,40 @@ export function useLights() {
     };
   }, []);
 
-  // toggle single light
-  const toggle = useCallback(
-    async (id: number): Promise<void> => {
-      const light = lights.find((l) => l.id === id);
-      if (!light) return;
+  // ✅ toggle — อ่านค่าจาก lightsRef แทน lights (ไม่มี stale closure)
+  //    ไม่ depend on [lights] จึงไม่ recreate ทุก render
+  const toggle = useCallback(async (id: number): Promise<void> => {
+    const light = lightsRef.current.find((l) => l.id === id);
+    if (!light) return;
 
+    const nextState = !light.s;
+
+    // optimistic update ด้วยค่าที่อ่านจาก ref
+    setLights((prev) =>
+      prev.map((l) => (l.id === id ? { ...l, s: nextState } : l)),
+    );
+
+    const { error } = await supabase
+      .from("lights")
+      .update({ s: nextState })
+      .eq("id", id);
+
+    if (error) {
+      // rollback กลับค่าเดิม
       setLights((prev) =>
-        prev.map((l) => (l.id === id ? { ...l, s: !l.s } : l)),
+        prev.map((l) => (l.id === id ? { ...l, s: light.s } : l)),
       );
+    }
+  }, []); // ✅ [] — stable function ไม่ recreate ทุก render
 
-      const { error } = await supabase
-        .from("lights")
-        .update({ s: !light.s })
-        .eq("id", id);
-
-      if (error) {
-        setLights((prev) =>
-          prev.map((l) => (l.id === id ? { ...l, s: light.s } : l)),
-        );
-      }
-    },
-    [lights],
-  );
-
-  // all off
+  // ✅ allOff — มี busy lock ป้องกันกด 2 ครั้งซ้อน
   const allOff = useCallback(async (): Promise<void> => {
-    const onIds = lights.filter((l) => l.s).map((l) => l.id);
+    if (busy) return;
+
+    const onIds = lightsRef.current.filter((l) => l.s).map((l) => l.id);
     if (onIds.length === 0) return;
 
+    setBusy(true);
     setLights((prev) => prev.map((l) => ({ ...l, s: false })));
 
     const { error } = await supabase
@@ -102,13 +114,18 @@ export function useLights() {
         .order("id");
       if (data) setLights(data as Light[]);
     }
-  }, [lights]);
 
-  // all on
+    setBusy(false);
+  }, [busy]);
+
+  // ✅ allOn — มี busy lock ป้องกันกด 2 ครั้งซ้อน
   const allOn = useCallback(async (): Promise<void> => {
-    const offIds = lights.filter((l) => !l.s).map((l) => l.id);
+    if (busy) return;
+
+    const offIds = lightsRef.current.filter((l) => !l.s).map((l) => l.id);
     if (offIds.length === 0) return;
 
+    setBusy(true);
     setLights((prev) => prev.map((l) => ({ ...l, s: true })));
 
     const { error } = await supabase
@@ -124,7 +141,9 @@ export function useLights() {
         .order("id");
       if (data) setLights(data as Light[]);
     }
-  }, [lights]);
 
-  return { lights, loading, connected, toggle, allOff, allOn };
+    setBusy(false);
+  }, [busy]);
+
+  return { lights, loading, connected, busy, toggle, allOff, allOn };
 }
